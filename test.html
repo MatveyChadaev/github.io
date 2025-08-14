@@ -1,79 +1,25 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор случайных вопросов ЧГК</title>
-    <script>
-        function getParentText(element) {
-            let text = element.textContent;
-
-            for (let i = 0; i < element.childNodes.length; i++) {
-                const child = element.childNodes[i];
-                if (child.nodeType != Node.TEXT_NODE) {
-                    text = text.replace(child.textContent, "");
-                }
-            }
-            return text.trim();
-        }
-
-        function parse() {
-            const difs = {
-                "Очень простой": 1,
-                "Простой": 2,
-                "Средний": 3,
-                "Сложный": 4,
-                "Очень сложный": 5
-            };
-
-            const complexity = difs["Простой"];
-            const proxyUrl = 'https://corsproxy.io/';
-            const targetUrl = `https://db.chgk.info/random/types1/complexity${complexity}/1/limit1`;
-
-            fetch(proxyUrl+targetUrl)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-
-                    const randomQuestion = doc.querySelector('.random_question');
-                    if (!randomQuestion) {
-                        throw new Error('Element .random_question not found');
-                    }
-                    
-                    let tour = randomQuestion.querySelector("p").textContent;
-                    let question = getParentText(randomQuestion);
-
-                    let answer = "";
-                    let comment = "";
-                    const data = [];
-                    
-                    const collapsible = doc.querySelector('.collapsible.collapsed');
-                    if (collapsible) {
-                        for (const child of collapsible.children) {
-                            const childText = child.textContent.trim();
-                            
-                            if (childText.startsWith('Ответ')) answer = childText;
-                            else if (childText.startsWith('Комментарий')) comment = childText;
-                            else if (childText.startsWith('Зачёт') || childText.startsWith('Автор') || childText.startsWith('Источник(и)')) {
-                                data.push(childText);
-                            }
-                        }
-                    }
-
-                    // Вывод результатов
-                    console.log("Тур:", tour);
-                    console.log("Вопрос:", question);
-                    console.log(answer);
-                    console.log(comment);
-                    console.log("Дополнительные данные:");
-                    data.forEach(item => console.log(" -", item));
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>
+    <title>JSON Generator</title>
 </head>
 <body>
-    <button onclick="parse()">Нажми на меня</button>
+    <script>
+        // Ваша функция для генерации JSON
+        function generateJSON() {
+            return {
+                timestamp: new Date().toISOString(),
+                data: [1, 2, 3, 4, 5],
+                message: "Hello from GitHub Pages!"
+            };
+        }
+
+        // Показываем JSON на странице и добавляем в скрытый элемент
+        document.addEventListener('DOMContentLoaded', () => {
+            const data = generateJSON();
+            document.body.textContent = JSON.stringify(data, null, 2);
+            document.body.innerHTML += `<!--${JSON.stringify(data)}-->`;
+        });
+    </script>
 </body>
+</html>
